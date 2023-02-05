@@ -48,7 +48,7 @@ export default function useTimeoutDispatch(props: UseTimeoutDispatchProps) {
 
         if (timeout > 0) {
             const deltaTime = now - dispatchTime.current;
-            const expectedDispatchCount = dispatchCount.current++;
+            const expectedDispatchCount = ++dispatchCount.current;
 
             if (deltaTime < timeout) {
                 onDispatchDelayed?.(dispatch, deltaTime);
