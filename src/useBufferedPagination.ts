@@ -35,6 +35,10 @@ export type PaginationFetchParams = {
      */
     readonly direction: number
     /**
+     * The recommended padding.
+     */
+    readonly padding: number
+    /**
      * The offset of the first range.
      */
     readonly offset: number
@@ -208,9 +212,10 @@ export type BufferedPagination<T> = {
      *
      * @param ranges the ranges to fetch.
      * @param direction the pagination direction.
+     * @param padding the recommended padding.
      * @return the result of the fetch.
      */
-    fetch(ranges: ReadonlyArray<Range>, direction?: number): Promise<PaginationData<T>>
+    fetch(ranges: ReadonlyArray<Range>, direction?: number, padding?: number): Promise<PaginationData<T>>
 
     /**
      * Insert the given data to the pagination buffer.
@@ -280,14 +285,14 @@ export default function useBufferedPagination<T>(
     }, [pageSize, pending, state.page, state.bufferModCount, queryModCount]);
 
     async function fetchAbsent() {
-        return await fetchRanges(subset.absence, state.direction);
+        return await fetchRanges(subset.absence, state.direction, pageSize * pageBufferRadius);
     }
 
-    async function fetchRanges(ranges: ReadonlyArray<Range>, direction: number = 0) {
+    async function fetchRanges(ranges: ReadonlyArray<Range>, direction: number = 0, padding: number = 0) {
         try {
             setPending(it => it + 1);
 
-            const result = await fetch({...ranges[0], ranges, direction});
+            const result = await fetch({...ranges[0], ranges, direction, padding});
 
             insertPaginationData(result);
             return result;
