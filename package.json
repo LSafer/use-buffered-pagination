@@ -1,6 +1,6 @@
 {
   "name": "use-buffered-pagination",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "React hook to achieve memory-efficient buffered pagination",
   "main": "build/index.js",
   "types": "build/index.d.ts",
