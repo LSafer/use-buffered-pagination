@@ -194,6 +194,11 @@ export type BufferedPagination<T> = {
     readonly setPageSize: Dispatch<SetStateAction<number>>
 
     /**
+     * Force the pagination to fetch absent ranges.
+     */
+    fetchAbsent(): Promise<PaginationData<T>>
+
+    /**
      * Force the pagination to fetch the given ranges
      * then update the pagination buffer with the fetch
      * result.
@@ -269,9 +274,14 @@ export default function useBufferedPagination<T>(
 
     useEffect(() => {
         if (!subset.sequential && offset < count /*&& pending <= 0*/) {
-            dispatch(() => fetchRanges(subset.absence, state.direction));
+            logger?.("Info", () => `Enqueued a fetch dispatch due to data demand`);
+            dispatch(() => fetchAbsent());
         }
     }, [pageSize, pending, state.page, state.bufferModCount, queryModCount]);
+
+    async function fetchAbsent() {
+        return await fetchRanges(subset.absence, state.direction);
+    }
 
     async function fetchRanges(ranges: ReadonlyArray<Range>, direction: number = 0) {
         try {
@@ -315,6 +325,7 @@ export default function useBufferedPagination<T>(
         setPage: state.setPage,
         setPageSize,
 
+        fetchAbsent,
         fetch: fetchRanges,
         insert: insertPaginationData
     };
