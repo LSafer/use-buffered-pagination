@@ -2,7 +2,7 @@
  * A buffer subset that all its data
  * exists with no absence whatsoever.
  */
-export type SequentialBufferSliceSubset<T> = {
+type SequentialBufferSliceSubset<T> = {
     /**
      * Indicates that this subset is sequential.
      */
@@ -10,18 +10,18 @@ export type SequentialBufferSliceSubset<T> = {
     /**
      * Always an empty array.
      */
-    readonly absence: []
+    readonly absence: ReadonlyArray<Range>
     /**
      * The subset's data.
      */
-    readonly data: T[]
+    readonly data: ReadonlyArray<T>
 }
 
 /**
  * A buffer subset that some of its
  * data doesn't exist.
  */
-export type NonSequentialBufferSliceSubset<T> = {
+type NonSequentialBufferSliceSubset<T> = {
     /**
      * Indicates that this subset is not sequential.
      */
@@ -29,13 +29,13 @@ export type NonSequentialBufferSliceSubset<T> = {
     /**
      * An array containing the absent ranges.
      */
-    readonly absence: Range[]
+    readonly absence: ReadonlyArray<Range>
     /**
      * Some of the subset's data
      * with the missing items set
      * to `undefined`.
      */
-    readonly data: (T | undefined)[]
+    readonly data: ReadonlyArray<T | undefined>
 }
 
 /**
@@ -91,7 +91,7 @@ export class BufferSlice<T> {
          * Will not create defencive copy.
          * Do not pass data that could change.
          */
-        readonly data: T[]
+        readonly data: ReadonlyArray<T>
     ) {
         checkOffset("BufferSlice", offset);
     }
@@ -215,7 +215,7 @@ export class BufferSliceSet<T> {
     /**
      * The backing slices.
      */
-    private slices: BufferSlice<T>[] = [];
+    private readonly slices: BufferSlice<T>[] = [];
 
     /**
      * The smallest offset in the backing slices. (non-negative)

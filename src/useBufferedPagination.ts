@@ -15,14 +15,14 @@ export type PaginationData<T> = {
     /**
      * Slices of fetched data.
      */
-    slices: BufferSlice<T>[]
+    readonly slices: ReadonlyArray<BufferSlice<T>>
     /**
      * The remaining items from the greatest
      * terminal offset of {@link slices}`.
      *
      * This value can be negative.
      */
-    remaining?: number | null
+    readonly remaining?: number | null
 }
 
 export type PaginationFetchParams = {
@@ -33,19 +33,19 @@ export type PaginationFetchParams = {
      * - negative: paginating backwards
      * - zero, undefined: unknown
      */
-    direction: number
+    readonly direction: number
     /**
      * The offset of the first range.
      */
-    offset: number
+    readonly offset: number
     /**
      * The length of the first range.
      */
-    length: number
+    readonly length: number
     /**
      * The ranges to be fetched.
      */
-    ranges: Range[]
+    readonly ranges: ReadonlyArray<Range>
 }
 
 export type UseBufferedPaginationProps<T> = {
@@ -60,7 +60,7 @@ export type UseBufferedPaginationProps<T> = {
      *
      * @default null
      */
-    query?: any
+    readonly query?: any
     /**
      * The known count.
      *
@@ -70,7 +70,7 @@ export type UseBufferedPaginationProps<T> = {
      * considered {@link Infinity} until the first
      * a {@link PaginationData.remaining} is provided.
      */
-    count?: number
+    readonly count?: number
     /**
      * The initial page. (used on first render of each query)
      *
@@ -78,7 +78,7 @@ export type UseBufferedPaginationProps<T> = {
      *
      * @default 0
      */
-    page?: number
+    readonly page?: number
     /**
      * The page size to be used. (used on first render only)
      *
@@ -86,7 +86,7 @@ export type UseBufferedPaginationProps<T> = {
      *
      * @default 15
      */
-    pageSize?: number
+    readonly pageSize?: number
 
     // Optimization
 
@@ -104,7 +104,7 @@ export type UseBufferedPaginationProps<T> = {
      *
      * @default 1
      */
-    pageBufferRadius?: number
+    readonly pageBufferRadius?: number
     /**
      * The number of query states allowed to be retained
      * at a time.
@@ -118,7 +118,7 @@ export type UseBufferedPaginationProps<T> = {
      *
      * @default 1
      */
-    queryBackstackSize?: number
+    readonly queryBackstackSize?: number
     /**
      * The timeout between each fetch. (in milliseconds)
      *
@@ -129,14 +129,14 @@ export type UseBufferedPaginationProps<T> = {
      *
      * @default 1000
      */
-    fetchTimeout?: number
+    readonly fetchTimeout?: number
 
     // Customization
 
     /**
      * An optional logger.
      */
-    logger?: PaginationLogger
+    readonly logger?: PaginationLogger
 
     // Implementation
 
@@ -150,48 +150,48 @@ export type BufferedPagination<T> = {
     /**
      * The current page.
      */
-    page: number
+    readonly page: number
     /**
      * The current set page size.
      */
-    pageSize: number
+    readonly pageSize: number
     /**
      * The count of all available pages. Infinity if unknown
      */
-    pageCount: number
+    readonly pageCount: number
     /**
      * The count of all available items. Infinity if unknown.
      */
-    count: number
+    readonly count: number
 
     /**
      * True, if currently loading.
      */
-    loading: boolean
+    readonly loading: boolean
     /**
      * True, if all the data is available.
      */
-    sequential: boolean
+    readonly sequential: boolean
     /**
      * The ranges of the data absent in {@link data}
      */
-    absence: Range[]
+    readonly absence: ReadonlyArray<Range>
     /**
      * The data of the current page.
      *
      * It will not contain undefined
      * when {@link sequential} is `true`
      */
-    data: (T | undefined)[]
+    readonly data: ReadonlyArray<T | undefined>
 
     /**
      * Change the page.
      */
-    setPage: Dispatch<SetStateAction<number>>
+    readonly setPage: Dispatch<SetStateAction<number>>
     /**
      * Change the page size.
      */
-    setPageSize: Dispatch<SetStateAction<number>>
+    readonly setPageSize: Dispatch<SetStateAction<number>>
 
     /**
      * Force the pagination to fetch the given ranges
@@ -205,7 +205,7 @@ export type BufferedPagination<T> = {
      * @param direction the pagination direction.
      * @return the result of the fetch.
      */
-    fetch(ranges: Range[], direction?: number): Promise<PaginationData<T>>
+    fetch(ranges: ReadonlyArray<Range>, direction?: number): Promise<PaginationData<T>>
 
     /**
      * Insert the given data to the pagination buffer.
@@ -273,7 +273,7 @@ export default function useBufferedPagination<T>(
         }
     }, [pageSize, pending, state.page, state.bufferModCount, queryModCount]);
 
-    async function fetchRanges(ranges: Range[], direction: number = 0) {
+    async function fetchRanges(ranges: ReadonlyArray<Range>, direction: number = 0) {
         try {
             setPending(it => it + 1);
 

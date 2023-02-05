@@ -9,7 +9,7 @@ export type UseTimeoutDispatchProps = {
      * The hook will insure this timeout
      * between every dispatch.
      */
-    timeout: number
+    readonly timeout: number
     /**
      * Gets called when dispatch is delayed.
      *

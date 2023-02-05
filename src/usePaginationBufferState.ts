@@ -18,11 +18,11 @@ export type PaginationBufferState<T> = {
 }
 
 export type UsePaginationBufferStateProps = {
-    query: string
-    initialPage: number
-    pageBufferRadius: number
-    pageSize: number
-    queryBackstackSize: number
+    readonly query: string
+    readonly initialPage: number
+    readonly pageBufferRadius: number
+    readonly pageSize: number
+    readonly queryBackstackSize: number
 
     onBufferCreated?(query: string)
     onBufferDestroyed?(query: string)
@@ -30,8 +30,8 @@ export type UsePaginationBufferStateProps = {
 }
 
 export type UsePaginationBufferStateReturn<T> = {
-    state: PaginationBufferState<T>
-    queryModCount: number
+    readonly state: PaginationBufferState<T>
+    readonly queryModCount: number
 }
 
 export default function usePaginationBufferState<T>(
