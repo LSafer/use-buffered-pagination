@@ -1,5 +1,6 @@
+```tsx
 import {useMemo, useState} from "react";
-import useBufferedPagination, {BufferSlice} from "./src";
+import useBufferedPagination, {BufferSlice} from "use-buffered-pagination";
 
 export function Component() {
     const data = [...Array(1_000)].map((_, index) => index);
@@ -118,3 +119,4 @@ export function Component() {
         </button>
     </div>;
 }
+```
