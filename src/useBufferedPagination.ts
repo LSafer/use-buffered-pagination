@@ -15,7 +15,7 @@ export type PaginationData<T> = {
     /**
      * Slices of fetched data.
      */
-    readonly slices: ReadonlyArray<BufferSlice<T>>
+    readonly slices?: ReadonlyArray<BufferSlice<T>> | null
     /**
      * The remaining items from the greatest
      * terminal offset of {@link slices}`.
@@ -287,11 +287,13 @@ export default function useBufferedPagination<T>(
     }
 
     function insertPaginationData(data: PaginationData<T>) {
-        state.buffer.insert(...data.slices);
-        state.setBufferModCount(it => it + 1);
+        if (data.slices) {
+            state.buffer.insert(...data.slices);
+            state.setBufferModCount(it => it + 1);
+        }
 
         if (data.remaining != null) {
-            const terminalOfLastMostSlice = Math.max(0, ...data.slices.map(it => it.terminal));
+            const terminalOfLastMostSlice = data.slices ? Math.max(0, ...data.slices.map(it => it.terminal)) : 0;
             const terminal = Math.max(0, terminalOfLastMostSlice + data.remaining);
             state.setTerminal(terminal);
 
