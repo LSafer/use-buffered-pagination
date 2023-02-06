@@ -32,6 +32,7 @@ export type UsePaginationBufferStateProps = {
 export type UsePaginationBufferStateReturn<T> = {
     readonly state: PaginationBufferState<T>
     readonly queryModCount: number
+    reset()
 }
 
 export default function usePaginationBufferState<T>(
@@ -123,7 +124,14 @@ export default function usePaginationBufferState<T>(
         state!.buffer.optimize(offset, length);
     }, [query, pageBufferRadius, pageSize, state.bufferModCount]);
 
-    return {state, queryModCount};
+    return {
+        state,
+        queryModCount,
+        reset() {
+            states.clear();
+            setQueryModCount(it => it + 1);
+        }
+    };
 }
 
 function performSetStateAction<T>(current: T, fn: SetStateAction<T>): T {

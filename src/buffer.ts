@@ -323,6 +323,13 @@ export class BufferSliceSet<T> {
     }
 
     /**
+     * Remove all the slices in the buffer.
+     */
+    public clear() {
+        this.slices.splice(0);
+    }
+
+    /**
      * Split any slice part that exists within
      * `offset` and `length` to multiple slices
      * where the items that exist within the range

@@ -198,6 +198,21 @@ export type BufferedPagination<T> = {
     readonly setPageSize: Dispatch<SetStateAction<number>>
 
     /**
+     * Reset everything.
+     */
+    reset(): void
+
+    /**
+     * Reset the current page.
+     */
+    resetCurrent(): void
+
+    /**
+     * Refresh the current page.
+     */
+    refresh(): void
+
+    /**
      * Force the pagination to fetch absent ranges.
      */
     fetchAbsent(): Promise<PaginationData<T>>
@@ -251,7 +266,7 @@ export default function useBufferedPagination<T>(
         })
     });
 
-    const {state, queryModCount} = usePaginationBufferState<T>({
+    const {state, queryModCount, ...bufferState} = usePaginationBufferState<T>({
         query,
         initialPage,
         pageSize,
@@ -283,6 +298,22 @@ export default function useBufferedPagination<T>(
             dispatch(() => fetchAbsent());
         }
     }, [pageSize, pending, state.page, state.bufferModCount, queryModCount]);
+
+    async function reset() {
+        bufferState.reset();
+        setPageSize(initialPageSize);
+    }
+
+    async function resetCurrent() {
+        state.buffer.clear();
+        state.setBufferModCount(it => it + 1);
+        state.setTerminal(null);
+    }
+
+    async function refresh() {
+        const ranges = [new Range(offset, offset + length)];
+        await fetchRanges(ranges, state.direction, pageSize * pageBufferRadius);
+    }
 
     async function fetchAbsent() {
         return await fetchRanges(subset.absence, state.direction, pageSize * pageBufferRadius);
@@ -336,6 +367,9 @@ export default function useBufferedPagination<T>(
         setPage: state.setPage,
         setPageSize,
 
+        reset,
+        resetCurrent,
+        refresh,
         fetchAbsent,
         fetch: fetchRanges,
         insert: insertPaginationData
