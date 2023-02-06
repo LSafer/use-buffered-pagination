@@ -11,17 +11,15 @@ export function Component() {
     const pagination = useBufferedPagination<number>({
         query,
         // fetchTimeout: 5_000,
-        async fetch({direction, offset, length}) {
+        async fetch({paddedRange}) {
             await new Promise(resolve => setTimeout(resolve, 2_000));
 
-            const paddingBehind = direction < 0 ? 15 : 0;
-            const paddingAhead = direction > 0 ? 15 : 0;
-
-            const i = Math.max(0, offset - paddingBehind);
-            const j = offset + length + paddingAhead;
-
             const slice = new BufferSlice(
-                i, dataFilteredByQuery.slice(i, j)
+                paddedRange.offset,
+                dataFilteredByQuery.slice(
+                    paddedRange.offset,
+                    paddedRange.length
+                )
             );
 
             const remaining = slice.terminal >= dataFilteredByQuery.length ?

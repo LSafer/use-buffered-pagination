@@ -16,14 +16,16 @@ function Component() {
         pageBufferRadius: 1, // the radius of the buffer
         queryBackstackSize: 1, // how many query buffers can be retain at once
         async fetch(params) {
-            // the first index of the needed items
-            params.offset;
-            // the number of needed items
-            params.length;
+            // the first (default) range to fetch
+            params.range;
+            // the first range with padding
+            params.paddedRange;
+            // the currently known items count
+            params.count;
             // negative if the user is paginating backwards 
             // and positive when paginating forwards 
             params.direction;
-            // the list of other ranges including (offset, length) to be fetch (if possible)
+            // the list of all the ranges to be fetch (if possible)
             params.ranges;
 
             const [dataOffset, data] = myFetchFunction(params);

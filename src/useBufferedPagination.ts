@@ -35,33 +35,17 @@ export type PaginationFetchParams = {
      */
     readonly direction: number
     /**
-     * The recommended padding.
+     * The currently known items count. {@link Infinity} if still unknown.
      */
-    readonly padding: number
+    readonly count: number
     /**
-     * The offset of the first range with padding.
+     * The first range.
      */
-    readonly paddedOffset: number
+    readonly range: Range
     /**
-     * The terminal of the first range with padding.
+     * The first range with padding.
      */
-    readonly paddedTerminal: number
-    /**
-     * The length of the first range with padding.
-     */
-    readonly paddedLength: number
-    /**
-     * The offset of the first range.
-     */
-    readonly offset: number
-    /**
-     * The terminal of the first range.
-     */
-    readonly terminal: number
-    /**
-     * The length of the first range.
-     */
-    readonly length: number
+    readonly paddedRange: Range
     /**
      * The ranges to be fetched.
      */
@@ -308,7 +292,13 @@ export default function useBufferedPagination<T>(
         try {
             setPending(it => it + 1);
 
-            const result = await fetch(createPaginationFetchParams(ranges, direction, padding));
+            const result = await fetch({
+                direction,
+                count,
+                range: ranges[0],
+                paddedRange: calculatePaddedRange(ranges[0], direction, padding),
+                ranges
+            });
 
             insertPaginationData(result);
             return result;
@@ -352,26 +342,11 @@ export default function useBufferedPagination<T>(
     };
 }
 
-function createPaginationFetchParams(
-    ranges: ReadonlyArray<Range>,
-    direction: number,
-    padding: number
-): PaginationFetchParams {
-    const offset = ranges[0].offset;
-    const terminal = ranges[0].terminal;
-    const length = ranges[0].length;
-    const paddedOffset = direction < 0 ? Math.max(0, offset - padding) : offset;
-    const paddedTerminal = direction > 0 ? terminal + padding : terminal;
-    const paddedLength = paddedTerminal - paddedOffset;
-    return {
-        offset,
-        terminal,
-        length,
-        ranges,
-        direction,
-        padding,
+function calculatePaddedRange(range: Range, direction: number, padding: number) {
+    const paddedOffset = direction < 0 ? Math.max(0, range.offset - padding) : range.offset;
+    const paddedTerminal = direction > 0 ? range.terminal + padding : range.terminal;
+    return new Range(
         paddedOffset,
-        paddedTerminal,
-        paddedLength
-    };
+        paddedTerminal - paddedOffset
+    );
 }
