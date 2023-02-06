@@ -39,9 +39,25 @@ export type PaginationFetchParams = {
      */
     readonly padding: number
     /**
+     * The offset of the first range with padding.
+     */
+    readonly paddedOffset: number
+    /**
+     * The terminal of the first range with padding.
+     */
+    readonly paddedTerminal: number
+    /**
+     * The length of the first range with padding.
+     */
+    readonly paddedLength: number
+    /**
      * The offset of the first range.
      */
     readonly offset: number
+    /**
+     * The terminal of the first range.
+     */
+    readonly terminal: number
     /**
      * The length of the first range.
      */
@@ -292,7 +308,7 @@ export default function useBufferedPagination<T>(
         try {
             setPending(it => it + 1);
 
-            const result = await fetch({...ranges[0], ranges, direction, padding});
+            const result = await fetch(createPaginationFetchParams(ranges, direction, padding));
 
             insertPaginationData(result);
             return result;
@@ -333,5 +349,29 @@ export default function useBufferedPagination<T>(
         fetchAbsent,
         fetch: fetchRanges,
         insert: insertPaginationData
+    };
+}
+
+function createPaginationFetchParams(
+    ranges: ReadonlyArray<Range>,
+    direction: number,
+    padding: number
+): PaginationFetchParams {
+    const offset = ranges[0].offset;
+    const terminal = ranges[0].terminal;
+    const length = ranges[0].length;
+    const paddedOffset = direction < 0 ? Math.max(0, offset - padding) : offset;
+    const paddedTerminal = direction > 0 ? terminal + padding : terminal;
+    const paddedLength = paddedTerminal - paddedOffset;
+    return {
+        offset,
+        terminal,
+        length,
+        ranges,
+        direction,
+        padding,
+        paddedOffset,
+        paddedTerminal,
+        paddedLength
     };
 }
