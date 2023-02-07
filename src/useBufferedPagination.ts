@@ -181,16 +181,21 @@ export type BufferedPagination<T> = {
      */
     readonly absence: ReadonlyArray<Range>
     /**
-     * The backing buffer.
-     */
-    readonly buffer: BufferSliceSetView<T>
-    /**
      * The data of the current page.
      *
      * It will not contain undefined
      * when {@link sequential} is `true`
      */
     readonly data: ReadonlyArray<T | undefined>
+
+    /**
+     * The range of the current data.
+     */
+    readonly range: Range
+    /**
+     * The backing buffer.
+     */
+    readonly buffer: BufferSliceSetView<T>
 
     /**
      * Change the page.
@@ -366,8 +371,10 @@ export default function useBufferedPagination<T>(
         loading: !!pending,
         sequential: subset.sequential,
         absence: subset.absence,
-        buffer: new BufferSliceSetView<T>(state.buffer),
         data: subset.data,
+
+        range: new Range(offset, count),
+        buffer: new BufferSliceSetView<T>(state.buffer),
 
         setPage: state.setPage,
         setPageSize,
