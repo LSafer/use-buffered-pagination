@@ -193,6 +193,10 @@ export type BufferedPagination<T> = {
      */
     readonly range: Range
     /**
+     * The range of the current data with padding.
+     */
+    readonly paddedRange: Range
+    /**
      * The backing buffer.
      */
     readonly buffer: BufferSliceSetView<T>
@@ -336,7 +340,7 @@ export default function useBufferedPagination<T>(
                 direction,
                 count,
                 range: ranges[0],
-                paddedRange: calculatePaddedRange(ranges[0], direction, padding),
+                paddedRange: calculatePaddedRange(ranges[0], padding, direction),
                 ranges
             });
 
@@ -374,6 +378,9 @@ export default function useBufferedPagination<T>(
         data: subset.data,
 
         range: new Range(offset, count),
+        get paddedRange() {
+            return calculatePaddedRange(this.range, pageSize * pageBufferRadius);
+        },
         buffer: new BufferSliceSetView<T>(state.buffer),
 
         setPage: state.setPage,
@@ -388,9 +395,15 @@ export default function useBufferedPagination<T>(
     };
 }
 
-function calculatePaddedRange(range: Range, direction: number, padding: number) {
-    const paddedOffset = direction < 0 ? Math.max(0, range.offset - padding) : range.offset;
-    const paddedTerminal = direction > 0 ? range.terminal + padding : range.terminal;
+function calculatePaddedRange(range: Range, padding: number, direction?: number) {
+    const paddedOffset =
+        direction == null || direction < 0 ?
+            Math.max(0, range.offset - padding) :
+            range.offset;
+    const paddedTerminal =
+        direction == null || direction > 0 ?
+            range.terminal + padding :
+            range.terminal;
     return new Range(
         paddedOffset,
         paddedTerminal - paddedOffset
