@@ -1,5 +1,5 @@
 import {Dispatch, SetStateAction, useEffect, useMemo, useState} from "react";
-import {BufferSlice, Range} from "./buffer";
+import {BufferSlice, BufferSliceSetView, Range} from "./buffer";
 import usePaginationBufferState from "./usePaginationBufferState";
 import useTimeoutDispatch from "./useTimeoutDispatch";
 
@@ -180,6 +180,10 @@ export type BufferedPagination<T> = {
      * The ranges of the data absent in {@link data}
      */
     readonly absence: ReadonlyArray<Range>
+    /**
+     * The backing buffer.
+     */
+    readonly buffer: BufferSliceSetView<T>
     /**
      * The data of the current page.
      *
@@ -362,6 +366,7 @@ export default function useBufferedPagination<T>(
         loading: !!pending,
         sequential: subset.sequential,
         absence: subset.absence,
+        buffer: new BufferSliceSetView<T>(state.buffer),
         data: subset.data,
 
         setPage: state.setPage,

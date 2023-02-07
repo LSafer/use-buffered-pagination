@@ -420,6 +420,41 @@ export class BufferSliceSet<T> {
     }
 }
 
+/**
+ * A readonly view of a {@link BufferSliceSet}.
+ */
+export class BufferSliceSetView<T> {
+    constructor(
+        private readonly buffer: BufferSliceSet<T>
+    ) {}
+
+    /**
+     * The smallest offset in the backing slices. (non-negative)
+     *
+     * Returns zero if no backing slices.
+     */
+    get offset(): number {
+        return this.buffer.offset;
+    }
+
+    /**
+     * The biggest terminal in the backing slices. (non-negative)
+     *
+     * Returns zero if no backing slices.
+     */
+    get terminal(): number {
+        return this.buffer.terminal;
+    }
+
+    /**
+     * Get subset from this buffer that starts at
+     * the given `offset` and have the given `length`.
+     */
+    public subset(offset: number, length: number): BufferSliceSubset<T> {
+        return this.buffer.subset(offset, length);
+    }
+}
+
 function checkOffsetAndLength(title: string, offset: number, length: number) {
     if (offset < 0 || length < 0) {
         throw new Error(`${title} cannot accept negative offset or length, got: ${offset}, ${length}`);
