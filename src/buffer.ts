@@ -383,24 +383,22 @@ export class BufferSliceSet<T> {
      * @internal
      */
     deduplicate() {
-        for0: for (let i = 0; i < this.slices.length;) {
+        for (let i = 0; i < this.slices.length; i++) {
             const ib = this.slices[i];
 
             for (let j = i + 1; j < this.slices.length;) {
-                const jb = this.slices[i + 1];
+                const jb = this.slices[j];
 
                 const ijb = jb.tryJoin(ib);
 
                 if (ijb != null) {
-                    this.slices[j] = ijb;
-                    this.slices.splice(i, 1);
-                    continue for0;
+                    this.slices[i] = ijb;
+                    this.slices.splice(j, 1);
+                    continue;
                 }
 
                 j++;
             }
-
-            i++;
         }
     }
 
