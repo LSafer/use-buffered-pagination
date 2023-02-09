@@ -305,8 +305,10 @@ export default function useBufferedPagination<T>(
     const count = state.terminal ?? initialCount ?? Infinity;
     const pageCount = Math.floor(count / pageSize);
 
+    const length = Math.max(0, Math.min(count - offset, pageSize));
+    const range = new Range(offset, length);
+
     const subset = useMemo(() => {
-        const length = Math.max(0, Math.min(count - offset, pageSize));
         return state.buffer.subset(offset, length);
     }, [pageSize, state.page, state.bufferModCount, queryModCount]);
 
@@ -383,9 +385,9 @@ export default function useBufferedPagination<T>(
         absence: subset.absence,
         data: subset.data,
 
-        range: new Range(offset, count),
+        range,
         get paddedRange() {
-            return calculatePaddedRange(this.range, pageSize * pageBufferRadius);
+            return calculatePaddedRange(range, pageSize * pageBufferRadius);
         },
         buffer: new BufferSliceSetView<T>(state.buffer),
 
