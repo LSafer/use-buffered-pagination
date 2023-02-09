@@ -173,6 +173,11 @@ export type BufferedPagination<T> = {
      */
     readonly loading: boolean
     /**
+     * True, if no data is available and not because
+     * the data is not fetched yet.
+     */
+    readonly empty: boolean
+    /**
      * True, if all the data is available.
      */
     readonly sequential: boolean
@@ -373,6 +378,7 @@ export default function useBufferedPagination<T>(
         pageCount,
 
         loading: !!pending,
+        empty: !!pending && subset.sequential && subset.data.length == 0,
         sequential: subset.sequential,
         absence: subset.absence,
         data: subset.data,
