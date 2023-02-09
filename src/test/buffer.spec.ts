@@ -19,7 +19,16 @@ describe("BufferSlice", () => {
     });
 });
 
-describe("Buffer", () => {
+describe("BufferSliceSet", () => {
+    describe("#subset", () => {
+        it("should fill missing data with undefined", () => {
+            const buffer = new BufferSliceSet<string>();
+
+            const subset = buffer.subset(30, 30);
+
+            assert.deepEqual(subset.data, [...Array(30)]);
+        });
+    });
     describe("#deduplicate", () => {
         it("should deduplicate same range items", () => {
             const buffer = new BufferSliceSet<string>();

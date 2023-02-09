@@ -273,6 +273,7 @@ export class BufferSliceSet<T> {
             const absentLength = slice.offset - absentOffset;
 
             if (absentLength) {
+                data.length += absentLength;
                 data.fill(undefined, absentOffset - offset, absentLength);
                 absence.push(new Range(absentOffset, absentLength));
             }
@@ -284,6 +285,7 @@ export class BufferSliceSet<T> {
         // should be tested, was absentOffset != terminal
         if (absentOffset != terminal) {
             const absentLength = terminal - absentOffset;
+            data.length += absentLength;
             data.fill(undefined, absentOffset - offset, absentLength);
             absence.push(new Range(absentOffset, absentLength));
         }
