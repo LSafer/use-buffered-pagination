@@ -380,7 +380,7 @@ export default function useBufferedPagination<T>(
         pageCount,
 
         loading: !!pending,
-        empty: !!pending && subset.sequential && subset.data.length == 0,
+        empty: !pending && subset.sequential && subset.data.length == 0,
         sequential: subset.sequential,
         absence: subset.absence,
         data: subset.data,
